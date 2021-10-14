@@ -30,7 +30,11 @@ class Prepare():
                 _or_city = raw.loc[i].turns[0]['labels']['frames'][0]['info']['or_city'][0]['val']
 
             if 'budget' in raw.loc[i].turns[0]['labels']['frames'][0]['info']:
-                _budget = raw.loc[i].turns[0]['labels']['frames'][0]['info']['budget'][0]['val']
+                TEMP = raw.loc[i].turns[0]['labels']['frames'][0]['info']['budget'][0]['val']
+                try:
+                    _budget = float(TEMP)
+                except:
+                    _budget = '0'
 
             if 'str_date' in raw.loc[i].turns[0]['labels']['frames'][0]['info']:
                 _str_date = raw.loc[i].turns[0]['labels']['frames'][0]['info']['str_date'][0]['val']
@@ -44,7 +48,11 @@ class Prepare():
     def correctDataFrame(self):
         self.prepared_sample['budget'] = self.prepared_sample['budget'].astype(str).astype(float)
         self.prepared_sample['budget'] = self.prepared_sample['budget'].transform(self.addThousand)
-        self.prepared_sample['budget'] = self.prepared_sample['budget'].astype(int).astype(object)            
+        self.prepared_sample['budget'] = self.prepared_sample['budget'].astype(int).astype(object) 
+
+        self.prepared_sample['text'] = self.prepared_sample['text'].str.lower()
+        self.prepared_sample['or_city'] = self.prepared_sample['or_city'].str.lower()
+        self.prepared_sample['dst_city'] = self.prepared_sample['dst_city'].str.lower()           
 
     def createLabel(self, intentName, row):
         _position = [] #or_city	dst_city	budget	str_date	end_date
