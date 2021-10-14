@@ -1,0 +1,40 @@
+Api Flask/app.py
+Api Flask/__pycache__/app.cpython-38.pyc
+Charles/main.py
+Charles/README.md
+Charles/requirements.txt
+Charles/auth/authentification.json
+Charles/data/frames_for_azure_luis.json
+Charles/sources/azure_luis.py
+Charles/sources/train_luis.py
+Charles/sources/__pycache__/azure_luis.cpython-38.pyc
+Charles/sources/__pycache__/train_luis.cpython-38.pyc
+Data/explore.ipynb
+Data/frames.json
+Data/sample.json
+Dialog Bot/app.py
+Dialog Bot/config.py
+Dialog Bot/README.md
+Dialog Bot/requirements.txt
+Dialog Bot/__pycache__/config.cpython-38.pyc
+Dialog Bot/bots/__init__.py
+Dialog Bot/bots/dialog_bot.py
+Dialog Bot/bots/__pycache__/__init__.cpython-38.pyc
+Dialog Bot/bots/__pycache__/dialog_bot.cpython-38.pyc
+Dialog Bot/data_models/__init__.py
+Dialog Bot/data_models/user_profile.py
+Dialog Bot/data_models/__pycache__/__init__.cpython-38.pyc
+Dialog Bot/data_models/__pycache__/user_profile.cpython-38.pyc
+Dialog Bot/deploymentTemplates/template-with-new-rg.json
+Dialog Bot/deploymentTemplates/template-with-preexisting-rg.json
+Dialog Bot/dialogs/__init__.py
+Dialog Bot/dialogs/user_profile_dialog.py
+Dialog Bot/dialogs/__pycache__/__init__.cpython-38.pyc
+Dialog Bot/dialogs/__pycache__/user_profile_dialog.cpython-38.pyc
+Dialog Bot/helpers/__init__.py
+Dialog Bot/helpers/dialog_helper.py
+Dialog Bot/helpers/__pycache__/__init__.cpython-38.pyc
+Dialog Bot/helpers/__pycache__/dialog_helper.cpython-38.pyc
+Luis Rest Api tutorial/introduction-to-luis.ipynb
+Luis Rest Api tutorial/liens.txt
+Luis Rest Api tutorial/notebook.ipynb
