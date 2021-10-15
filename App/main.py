@@ -1,9 +1,14 @@
 from sources.initialize_luis import InitializeLuis
 from sources.prepare_data import Prepare
 
-authoringKey = 'ef26b6777f96406cbdcea4e7e6d50dcc'
-authoringEndpoint = 'https://westeurope.api.cognitive.microsoft.com/'
-sampleSize = 1000
+import json
+
+with open("auth/authoring.json") as f: #Retrieving the key and endpoint from a hidden file
+    authoring_keys = json.load(f)
+
+authoringKey = authoring_keys.get('authoringKey')
+authoringEndpoint = authoring_keys.get('authoringEndpoint')
+sampleSize = 20
 batchSize = 20
 
 def chunk_list (list, x):

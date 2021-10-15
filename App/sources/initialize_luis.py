@@ -13,10 +13,16 @@ class InitializeLuis():
         self.initializeEntities()
         self.initializeIntents()
 
+    def get_child_id(self, model, childName):	
+        theseChildren = next(filter((lambda child: child.name == childName), model.children))
+        
+        return theseChildren.id
+
     def initializeApp(self):
         appName = "Booking Flight " + str(uuid.uuid4())
         self.versionId = "0.1"
         self.intentName = "bookingIntent"
+        self.entityName = "ticketBooking"
 
         self.client = LUISAuthoringClient(self.authoringEndpoint, CognitiveServicesCredentials(self.authoringKey))
     
@@ -40,13 +46,40 @@ class InitializeLuis():
             { "name": "end_date" }
         ]
 
-        try:            
-            self.client.model.add_entity(self.app_id, self.versionId, name="ticketBooking", children=mlEntityDefinition)
+        try:
+            modelId = self.client.model.add_entity(self.app_id, self.versionId, name=self.entityName, children=mlEntityDefinition) #Adding the entity definition
+
+            self.client.model.add_prebuilt(self.app_id, self.versionId, prebuilt_extractor_names=["number"]) #Adding prebuilt features   
+            self.client.model.add_prebuilt(self.app_id, self.versionId, prebuilt_extractor_names=["datetimeV2"])
+            self.client.model.add_prebuilt(self.app_id, self.versionId, prebuilt_extractor_names=["geographyV2"])            
+
+            modelObject = self.client.model.get_entity(self.app_id, self.versionId, modelId) #Linking prebuilt features to entity
+
+            budgetId = self.get_child_id(modelObject, "budget") #Adding number prebuilt to budget
+            prebuiltFeatureRequiredDefinition = { "model_name": "number" } 
+            self.client.features.add_entity_feature(self.app_id, self.versionId, budgetId, prebuiltFeatureRequiredDefinition)
+
+            str_dateId = self.get_child_id(modelObject, "str_date") #Adding number prebuilt to str_date
+            prebuiltFeatureRequiredDefinition = { "model_name": "datetimeV2" } 
+            self.client.features.add_entity_feature(self.app_id, self.versionId, str_dateId, prebuiltFeatureRequiredDefinition)
+
+            end_dateId = self.get_child_id(modelObject, "end_date") #Adding number prebuilt to end_date
+            prebuiltFeatureRequiredDefinition = { "model_name": "datetimeV2" } 
+            self.client.features.add_entity_feature(self.app_id, self.versionId, end_dateId, prebuiltFeatureRequiredDefinition)
+
+            or_cityId = self.get_child_id(modelObject, "or_city") #Adding number prebuilt to or_city
+            prebuiltFeatureRequiredDefinition = { "model_name": "geographyV2" } 
+            self.client.features.add_entity_feature(self.app_id, self.versionId, or_cityId, prebuiltFeatureRequiredDefinition)
+
+            dst_cityId = self.get_child_id(modelObject, "dst_city") #Adding number prebuilt to dst_city
+            prebuiltFeatureRequiredDefinition = { "model_name": "geographyV2" } 
+            self.client.features.add_entity_feature(self.app_id, self.versionId, dst_cityId, prebuiltFeatureRequiredDefinition)
+
             print("Created ML Entity.")
         except Exception as err:
             print("Encountered exception. {}".format(err))
             self.error = err    
-            print("You may need to verify the definition of your entity, the name of the entity and the app parameters.")
+            print("You may need to verify the definition of your entity, the name of the entity, the prebuilt features or the app parameters.")
 
     def initializeIntents(self):
         try:
