@@ -13,7 +13,7 @@ class Prepare():
         return x
 
     def initializeDataFrame(self, sampleSize):
-        raw = pd.read_json('../data/frames.json')
+        raw = pd.read_json('./data/frames.json')
 
         sample = raw.loc[:sampleSize]
         self.prepared_sample = pd.DataFrame(columns=['text', 'or_city', 'dst_city', 'budget', 'str_date', 'end_date'])
