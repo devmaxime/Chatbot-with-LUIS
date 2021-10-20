@@ -49,7 +49,7 @@ if __name__ == '__main__':
             waiting = False
 
     print('Publishing..', end="")
-    LuisApp.client.azure_accounts.assign_to_app()
+    #LuisApp.client.azure_accounts.assign_to_app()
     LuisApp.client.apps.update_settings(LuisApp.app_id, is_public=True)
     responseEndpointInfo = LuisApp.client.apps.publish(LuisApp.app_id, LuisApp.versionId, is_staging=False)
     print('done')
