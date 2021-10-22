@@ -13,7 +13,7 @@ const TEXT_PROMPT = 'textPrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';
 
 class BookingDialog extends CancelAndHelpDialog {
-    constructor(id) {
+    constructor(id, telemetryClient) {
         super(id || 'bookingDialog');
 
         this.addDialog(new TextPrompt(TEXT_PROMPT))
@@ -30,6 +30,7 @@ class BookingDialog extends CancelAndHelpDialog {
             ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
+        this.telemetryClient = telemetryClient;
     }
 
     /**
@@ -136,6 +137,15 @@ class BookingDialog extends CancelAndHelpDialog {
         if (stepContext.result === true) {
             const bookingDetails = stepContext.options;
             return await stepContext.endDialog(bookingDetails);
+        }
+        else {
+            this.telemetryClient.trackTrace({
+                message: 'Bot didn\'t get it.',
+                properties: {
+                    context: stepContext.options
+
+                }
+            });
         }
         return await stepContext.endDialog();
     }
