@@ -140,12 +140,13 @@ class BookingDialog extends CancelAndHelpDialog {
         }
         else {
             this.telemetryClient.trackTrace({
-                message: 'Bot didn\'t get it.',
+                message: 'User return No during the confirmation step. See properties for more informations.',
                 properties: {
-                    context: stepContext.options
+                    context: stepContext.options, 
 
                 }
             });
+            console.log('Trace sent.')
         }
         return await stepContext.endDialog();
     }

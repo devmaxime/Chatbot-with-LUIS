@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 class Prepare():
-    def __init__(self, sampleSize: int):
-        self.initializeDataFrame(sampleSize)
+    def __init__(self, sampleSize: int, frames):
+        self.initializeDataFrame(sampleSize, frames)
         self.correctDataFrame()
         print('Data prepared.')  
 
@@ -12,9 +12,7 @@ class Prepare():
             x = x * 1000
         return x
 
-    def initializeDataFrame(self, sampleSize):
-        raw = pd.read_json('./data/frames.json')
-
+    def initializeDataFrame(self, sampleSize, raw):
         sample = raw.loc[:sampleSize]
         self.prepared_sample = pd.DataFrame(columns=['text', 'or_city', 'dst_city', 'budget', 'str_date', 'end_date'])
 

@@ -2,32 +2,36 @@ from sources.initialize_luis import InitializeLuis
 from sources.prepare_data import Prepare
 
 import json, time
+from pandas import read_json
 
-with open("auth/authoring.json") as f: #Retrieving the key and endpoint from a hidden file
-    authoring_keys = json.load(f)
+with open("config.json") as f: #Retrieving config from config.json
+    CONFIG = json.load(f)
 
-authoringKey = authoring_keys.get('authoringKey')
-authoringEndpoint = authoring_keys.get('authoringEndpoint')
-sampleSize = 1000
-batchSize = 20
+with open(CONFIG.get('authPath')) as f: #Retrieving the key and endpoint from a hidden file
+    AUTHORING = json.load(f)    
+authoringKey = AUTHORING.get('authoringKey')
+authoringEndpoint = AUTHORING.get('authoringEndpoint')
 
 def chunk_list (list, x):
     return [list[i:i+x] for i in range(0, len(list), x)]
 
 if __name__ == '__main__':
-    LuisApp = InitializeLuis(authoringKey, authoringEndpoint)
-    Data = Prepare(sampleSize)
+    LuisApp = InitializeLuis(authoringKey, authoringEndpoint, CONFIG) #Initialize Luis application
+
+    frames = read_json(CONFIG.get('framesPath')) #Load frames to sent before sending it to preparation
+    Data = Prepare(CONFIG.get('sampleSize'), frames)
+    
     print('Initialization and data preparation complete. Let\'s execute the content of main.py.')
 
     print('Generating batchs..', end="")
     labelsToSend = []
-    for i in range(0, sampleSize):        
+    for i in range(0, CONFIG.get('sampleSize')):        
         labeledUtterance = Data.createLabel(LuisApp.intentName, Data.prepared_sample.iloc[i])
         labelsToSend.append(labeledUtterance)
     print('done')
 
     print('Uploading batch..', end="")
-    chunks = chunk_list(labelsToSend, batchSize)
+    chunks = chunk_list(labelsToSend, CONFIG.get('batchSize'))
 
     for chunk in chunks:
         try:
@@ -49,13 +53,8 @@ if __name__ == '__main__':
             waiting = False
 
     print('Publishing..', end="")
-    #LuisApp.client.azure_accounts.assign_to_app()
     LuisApp.client.apps.update_settings(LuisApp.app_id, is_public=True)
     responseEndpointInfo = LuisApp.client.apps.publish(LuisApp.app_id, LuisApp.versionId, is_staging=False)
     print('done')
 
     print(responseEndpointInfo) 
-    #TODO: Add ressources to the app and publish it really.
-
-    # runtimeCredentials = CognitiveServicesCredentials(predictionKey)
-    # clientRuntime = LUISRuntimeClient(endpoint=predictionEndpoint, credentials=runtimeCredentials) 

@@ -5,9 +5,10 @@ from msrest.authentication import CognitiveServicesCredentials
 import uuid
 
 class InitializeLuis():
-    def __init__(self, authoringKey : str, authoringEndpoint : str):
+    def __init__(self, authoringKey : str, authoringEndpoint : str, CONFIG):
         self.authoringKey = authoringKey
         self.authoringEndpoint = authoringEndpoint
+        self.CONFIG = CONFIG
 
         self.initializeApp()
         self.initializeEntities()
@@ -19,10 +20,10 @@ class InitializeLuis():
         return theseChildren.id
 
     def initializeApp(self):
-        appName = "Booking Flight " + str(uuid.uuid4())
-        self.versionId = "0.1"
-        self.intentName = "bookingIntent"
-        self.entityName = "ticketBooking"
+        appName = self.CONFIG.get('appName') + " " + str(uuid.uuid4())
+        self.versionId = self.CONFIG.get('versionId')
+        self.intentName = self.CONFIG.get('intentName')
+        self.entityName = self.CONFIG.get('entityName')
 
         self.client = LUISAuthoringClient(self.authoringEndpoint, CognitiveServicesCredentials(self.authoringKey))
     
@@ -38,7 +39,7 @@ class InitializeLuis():
             print("You may need to verify the name of your app, the key or the endpoint.")
 
     def initializeEntities(self):
-        mlEntityDefinition = mlEntityDefinition = [
+        mlEntityDefinition = [
             { "name": "or_city" },
             { "name": "dst_city" },
             { "name": "budget" },

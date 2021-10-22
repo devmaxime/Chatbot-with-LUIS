@@ -79,10 +79,12 @@ class MainDialog extends ComponentDialog {
 
         // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
         const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
-        console.log(luisResult['entities'])
+        // console.log(stepContext.context['_activity'].text);
+        // console.log(luisResult['entities'])
         switch (LuisRecognizer.topIntent(luisResult)) {
         case 'bookingIntent': {
             // Initialize BookingDetails with any entities we may have found in the response.
+            bookingDetails.sentence = stepContext.context['_activity'].text;
             bookingDetails.origin = this.luisRecognizer.getFromEntities(luisResult).or_city;
             bookingDetails.destination = this.luisRecognizer.getToEntities(luisResult).dst_city;
             bookingDetails.str_date = this.luisRecognizer.getStartDate(luisResult).str_date;

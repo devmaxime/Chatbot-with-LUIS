@@ -1,0 +1,10 @@
+{
+        "framesPath": "./data/frames.json",
+        "authPath" : "auth/authoring.json",
+        "appName": "Booking Flight",
+        "intentName": "bookingIntent",
+        "entityName": "ticketBooking",
+        "versionId": 0.1,
+        "sampleSize" : 1000,
+        "batchSize" : 20
+}
