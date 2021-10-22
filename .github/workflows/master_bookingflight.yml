@@ -28,6 +28,7 @@ jobs:
       - name: npm install(, build, and test) build and test as been removed
         run: |
           npm install
+          npm build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
