@@ -25,11 +25,6 @@ jobs:
         with:
           node-version: '14.x'
 
-      - name: npm install(, build, and test) build and test as been removed
-        run: |
-          npm install
-          npm build
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
@@ -48,6 +43,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
+          
+      - name: npm install(, build, and test) build and test as been removed
+        run: |
+          npm install
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
