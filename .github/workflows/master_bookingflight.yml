@@ -8,6 +8,10 @@ on:
     branches:
       - master
   workflow_dispatch:
+  
+defaults:
+  run:
+    working-directory: ./Bot
 
 jobs:
   build:
