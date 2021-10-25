@@ -10,15 +10,15 @@ from msrest.authentication import CognitiveServicesCredentials
 
 import json
 with open("config.json") as f: #Retrieving config from config.json
-    CONFIG = json.load(f)
+    _CONFIG = json.load(f)
 
 class TestStringMethods(unittest.TestCase):
 
     def test_frames(self):
-        self.assertTrue(os.path.exists(CONFIG.get('framesPath')))
+        self.assertTrue(os.path.exists(_CONFIG.get('framesPath')))
 
     def test_initializeDataFrame(self):
-        frames = read_json(CONFIG.get('framesPath'))
+        frames = read_json(_CONFIG.get('framesPath'))
         Data = Prepare(1, frames)
 
         testUtterance = Data.createLabel('intentTest', Data.prepared_sample.iloc[0])

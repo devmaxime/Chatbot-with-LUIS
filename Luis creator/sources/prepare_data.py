@@ -1,19 +1,26 @@
 import pandas as pd
-import numpy as np
-
 class Prepare():
-    def __init__(self, sampleSize: int, frames):
-        self.initializeDataFrame(sampleSize, frames)
+    def __init__(self, trainSize: int, frames, testSize: int = 0):
+        self.initializeDataFrame(trainSize, frames, testSize)
         self.correctDataFrame()
-        print('Data prepared.')  
 
     def addThousand(self, x):
+        """
+        If the params is less than 100. Multiply it by 1000.
+        """
         if x < 100:
             x = x * 1000
         return x
 
-    def initializeDataFrame(self, sampleSize, raw):
-        sample = raw.loc[:sampleSize]
+    def initializeDataFrame(self, trainSize, raw, testSize):
+        """
+        Extract from a json file all the needed data and put it in a dataframe.
+        """
+        if(testSize == 0):       
+            sample = raw.loc[:trainSize]
+        if(testSize > 0):
+            sample = raw.loc[trainSize:trainSize + testSize].reset_index(drop=True)
+
         self.prepared_sample = pd.DataFrame(columns=['text', 'or_city', 'dst_city', 'budget', 'str_date', 'end_date'])
 
         for i in range(0,len(sample)): #Similar to switch
@@ -44,6 +51,9 @@ class Prepare():
             self.prepared_sample = self.prepared_sample.append(_new_row, ignore_index=True)
         
     def correctDataFrame(self):
+        """
+        Apply manual corrections. Convert budget to integer (not type but real integer). Convert text to lower case.
+        """
         self.prepared_sample['budget'] = self.prepared_sample['budget'].astype(str).astype(float)
         self.prepared_sample['budget'] = self.prepared_sample['budget'].transform(self.addThousand)
         self.prepared_sample['budget'] = self.prepared_sample['budget'].astype(int).astype(object) 
@@ -53,6 +63,9 @@ class Prepare():
         self.prepared_sample['dst_city'] = self.prepared_sample['dst_city'].str.lower()           
 
     def createLabel(self, intentName, row):
+        """
+        Convert a dataframe into a usable luis json label according to the required architecture.
+        """
         _position = [] #or_city	dst_city	budget	str_date	end_date
         args = ['or_city',	'dst_city',	'budget',	'str_date',	'end_date']
         #print(row.text)

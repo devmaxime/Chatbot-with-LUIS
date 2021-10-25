@@ -1,5 +1,6 @@
 from sources.initialize_luis import InitializeLuis
 from sources.prepare_data import Prepare
+from sources.evaluate_luis import Evaluate
 
 import json, time
 from pandas import read_json
@@ -19,13 +20,12 @@ if __name__ == '__main__':
     LuisApp = InitializeLuis(authoringKey, authoringEndpoint, CONFIG) #Initialize Luis application
 
     frames = read_json(CONFIG.get('framesPath')) #Load frames to sent before sending it to preparation
-    Data = Prepare(CONFIG.get('sampleSize'), frames)
-    
-    print('Initialization and data preparation complete. Let\'s execute the content of main.py.')
+    Data = Prepare(CONFIG.get('trainSize'), frames)    
+    print('Initialization and data preparation complete. Let\'s execute the content of the code in main.py.')
 
     print('Generating batchs..', end="")
     labelsToSend = []
-    for i in range(0, CONFIG.get('sampleSize')):        
+    for i in range(0, CONFIG.get('trainSize')):        
         labeledUtterance = Data.createLabel(LuisApp.intentName, Data.prepared_sample.iloc[i])
         labelsToSend.append(labeledUtterance)
     print('done')
@@ -58,3 +58,5 @@ if __name__ == '__main__':
     print('done')
 
     print(responseEndpointInfo) 
+
+    Evaluation = Evaluate(CONFIG.get('testSize'), frames, CONFIG.get('trainSize'), authoringKey, authoringEndpoint, LuisApp.app_id)

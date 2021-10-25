@@ -5,6 +5,7 @@
         "intentName": "bookingIntent",
         "entityName": "ticketBooking",
         "versionId": 0.1,
-        "sampleSize" : 1000,
-        "batchSize" : 20
+        "trainSize" : 1000,
+        "batchSize" : 20,
+        "testSize" : 100
 }

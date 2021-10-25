@@ -15,11 +15,16 @@ class InitializeLuis():
         self.initializeIntents()
 
     def get_child_id(self, model, childName):	
-        theseChildren = next(filter((lambda child: child.name == childName), model.children))
-        
+        """
+        Return the children id of an element.
+        """
+        theseChildren = next(filter((lambda child: child.name == childName), model.children))        
         return theseChildren.id
 
     def initializeApp(self):
+        """
+        Create a luis app according to the CONFIG.
+        """
         appName = self.CONFIG.get('appName') + " " + str(uuid.uuid4())
         self.versionId = self.CONFIG.get('versionId')
         self.intentName = self.CONFIG.get('intentName')
@@ -39,6 +44,9 @@ class InitializeLuis():
             print("You may need to verify the name of your app, the key or the endpoint.")
 
     def initializeEntities(self):
+        """
+        Create all the machine learned entities for the project. Add the prebuilt features to the entities.
+        """
         mlEntityDefinition = [
             { "name": "or_city" },
             { "name": "dst_city" },
@@ -83,6 +91,9 @@ class InitializeLuis():
             print("You may need to verify the definition of your entity, the name of the entity, the prebuilt features or the app parameters.")
 
     def initializeIntents(self):
+        """
+        Create the needed intent.
+        """
         try:
             self.client.model.add_intent(self.app_id, self.versionId, self.intentName)
             print('Created Intent.')
