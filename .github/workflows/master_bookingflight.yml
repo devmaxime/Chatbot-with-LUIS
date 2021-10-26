@@ -53,13 +53,6 @@ jobs:
         with:
           name: node-app
           
-<<<<<<< HEAD
-=======
-      - name: npm install
-        run: |
-          npm install
->>>>>>> e2c92d257ef3ac9c92258038f56f93ead16699f3
-
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
