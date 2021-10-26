@@ -9,14 +9,13 @@ on:
       - master
   workflow_dispatch:
   
-defaults:
-  run:
-    working-directory: ./Bot
-
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: ./Bot
+        
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -37,8 +36,13 @@ jobs:
           path: .
 
   deploy:
+    defaults:
+      run:
+        working-directory: ./Bot
+        
     runs-on: ubuntu-latest
     needs: build
+    
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -49,6 +53,12 @@ jobs:
         with:
           name: node-app
           
+<<<<<<< HEAD
+=======
+      - name: npm install
+        run: |
+          npm install
+>>>>>>> e2c92d257ef3ac9c92258038f56f93ead16699f3
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -58,3 +68,7 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300B716B840B44DD85C8C1CFC4025360 }}
           package: .
+          
+      - name: npm start
+        run: |
+          npm start
