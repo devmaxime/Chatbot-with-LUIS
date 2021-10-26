@@ -10,11 +10,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  upload:
-    defaults:
-      run:
-        working-directory: ./Bot
-        
+  upload:        
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -31,9 +27,6 @@ jobs:
           path: ./Bot
 
   deploy:
-    defaults:
-      run:
-        working-directory: ./Bot
         
     runs-on: ubuntu-latest
     needs: upload
