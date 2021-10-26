@@ -12,18 +12,20 @@ class Prepare():
             x = x * 1000
         return x
 
-    def initializeDataFrame(self, trainSize, raw, testSize):
+    def initializeDataFrame(self, trainSize, raw, testSize = 0):
         """
         Extract from a json file all the needed data and put it in a dataframe.
         """
         if(testSize == 0):       
-            sample = raw.loc[:trainSize]
-        if(testSize > 0):
-            sample = raw.loc[trainSize:trainSize + testSize].reset_index(drop=True)
+            sample = raw.loc[:trainSize - 1] #If size = 10, we want from 0:9
+        elif(testSize > 0):
+            sample = raw.loc[trainSize:trainSize + testSize - 1] #Same
 
         self.prepared_sample = pd.DataFrame(columns=['text', 'or_city', 'dst_city', 'budget', 'str_date', 'end_date'])
 
         for i in range(0,len(sample)): #Similar to switch
+            if(testSize > 0): #Quick fix since the index doesn't start at 0. See line 22.
+                i = i + trainSize
             _text = sample.loc[i].turns[0]['text']
             _dst_city = _or_city = _str_date = _end_date = 'none'
             _budget = 0

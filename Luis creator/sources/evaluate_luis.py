@@ -1,14 +1,32 @@
 from sources.prepare_data import Prepare
 
+from difflib import SequenceMatcher
+
 from azure.cognitiveservices.language.luis.runtime import LUISRuntimeClient
 from msrest.authentication import CognitiveServicesCredentials
 
 import numpy as np
 
+def check_key_exist(test_dict, key):
+    try:
+       value = test_dict[key]
+       return True
+    except KeyError:
+        return False
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
 class Score:
     def __init__(self):
-        self._intents = []
-        self.ratioIntents = 0
+        self._intentsNumber = []
+        self.ratioIntentsNumber = 0
+
+        self._intentsRightness = []
+        self.ratioIntentsRightness = 0
+
+        self._intentsAlmostRightness = []
+        self.ratioIntentsAlmostRightness = 0
 
 
 class Evaluate:
@@ -19,7 +37,9 @@ class Evaluate:
         self._appId = LuisAppId
 
         self.evaluating(self._testData)
-        print(self.score.ratioIntents)
+        print('Intents number score', self.score.ratioIntentsNumber)
+        print('Exact intent score', self.score.ratioIntentsRightness)
+        print('Almost exact intent score', self.score.ratioIntentsAlmostRightness)
 
         exit()
 
@@ -37,30 +57,58 @@ class Evaluate:
 
     def evaluating(self, testData) -> None:
         """
-        Execute all the evaluations.
+        Query Luis with some text then execute all the evaluations.
         """
         for _, row in testData.prepared_sample.iterrows():
-            intentNumber = self.countIntent(row)
-            if(intentNumber > 0): #Avoid division by zero
-                self.evaluateIntentnumber(row, self.countIntent(row))            
-        self.score.ratioIntents = np.round(np.mean(self.score._intents), 3)
-        
+            _text = row['text']
+            try:
+                result = self._client.prediction.get_slot_prediction(
+                    self._appId,
+                    "Production",
+                    prediction_request = { "query" : _text }                
+                )
+            except Exception as err:
+                print("Encountered exception. {}".format(err))
+
+            # Tests
+            self.evaluateIntentNumber(row, result)   
+            self.evaluateIntentRightness(row, result)
+
+        # Calculate means             
+        self.score.ratioIntentsNumber = np.round(np.mean(self.score._intentsNumber), 3)  
+        self.score.ratioIntentsRightness = np.round(np.mean(self.score._intentsRightness), 3)
+        self.score.ratioIntentsAlmostRightness = np.round(np.mean(self.score._intentsAlmostRightness), 3)        
 
 
-    def evaluateIntentnumber(self, query, intentNumber) -> None:
+    def evaluateIntentNumber(self, row, queryResult) -> None:
         """
         evaluateIntentNumber compares how many intents the LuisApp found versus how many intents it's supposed to find.
         """
-        _text = query['text']
+        intentNumber = self.countIntent(row)
+        if(intentNumber > 0 and check_key_exist(queryResult.prediction.entities, 'ticketBooking')): #Avoid division by zero and empty query result.
+            self.score._intentsNumber.append(len(queryResult.prediction.entities['ticketBooking'][0]) / intentNumber)
 
-        try:
-            result = self._client.prediction.get_slot_prediction(
-                self._appId,
-                "Production",
-                prediction_request = { "query" : _text }                
-            )
-        except Exception as err:
-            print("Encountered exception. {}".format(err))
-            
-        if(bool(result.prediction.entities)): #Check if not empty
-            self.score._intents.append(len(result.prediction.entities['ticketBooking'][0]) / intentNumber)
+    def evaluateIntentRightness(self, row, queryResult) -> None:
+        """
+        evaluateIntentRightness compares the returned intent versus the original intent.
+        """
+        _score1 = []
+        _score2 = []
+        if(check_key_exist(queryResult.prediction.entities, 'ticketBooking')): #Avoid empty query result.
+            for item in queryResult.prediction.entities['ticketBooking'][0].items():
+                if(row[item[0]] == item[1][0]): #Exact match
+                    _score1.append(1)
+                else:
+                    _score1.append(0)
+                if(similar(str(row[item[0]]), str(item[1][0])) > 0.90): #Almost match
+                    _score2.append(1)
+                else:
+                    _score2.append(0)
+        if(bool(_score1)):
+            self.score._intentsRightness.append(np.round(np.mean(_score1), 3))
+        else:
+            self.score._intentsRightness.append(0)
+        if(bool(_score2)):
+            self.score._intentsAlmostRightness.append(np.round(np.mean(_score2), 3))
+        else:
+            self.score._intentsAlmostRightness.append(0)            
