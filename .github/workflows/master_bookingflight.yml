@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: ./Bot
 
   deploy:
     defaults:
