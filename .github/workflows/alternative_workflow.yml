@@ -32,8 +32,9 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
+    - uses: actions/checkout@v2
     - name : Zip      
-      uses: papeloto/action-zip@v1
+      uses: papeloto/action-zip@v1 
       with:
           files: bots/ 
           dest: result.zip
