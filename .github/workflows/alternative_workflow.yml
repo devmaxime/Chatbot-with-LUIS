@@ -32,9 +32,12 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Azure CLI script
-      uses: azure/CLI@v1
+    - name : Zip      
+      uses: papeloto/action-zip@v1
       with:
-        azcliversion: 2.0.72
-        inlineScript: |
-          az webapp deployment source config-zip --resource-group "clip10" --name "clibotwebappp" --src "node-app.zip" 
+          files: /
+          dest: result.zip
+          name: my-artifact
+          path: ${{ github.workspace }}/result.zip
+    
+
