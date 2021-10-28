@@ -6,14 +6,14 @@ on:
       - master
   workflow_dispatch:
   
-  defaults:
+defaults:
   run:
     working-directory: ./Bot
     
-  job:  
-    prepare:
+jobs:  
+  prepare:
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: npm install and build
         run: |
           npm install
