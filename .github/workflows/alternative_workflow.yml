@@ -28,9 +28,8 @@ jobs:
     needs: prepare
     steps:
       - uses: actions/checkout@master
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
+      - name: Upload Release
+        uses: ncipollo/release-action@v1
         with:
-          type: 'zip'
-          filename: 'bot.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig'
+          artifacts: "release.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
