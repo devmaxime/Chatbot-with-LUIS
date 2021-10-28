@@ -1,0 +1,26 @@
+name: Zip and publish the bot using Azure CLI
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  
+  defaults:
+  run:
+    working-directory: ./Bot
+    
+  job:  
+    prepare:
+    runs-on: ubuntu-latest
+      steps:
+      - name: npm install and build
+        run: |
+          npm install
+      - uses: actions/checkout@master
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'bot.zip'
+          exclusions: '*.git* /*node_modules/* .editorconfig'
