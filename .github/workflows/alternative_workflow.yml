@@ -24,7 +24,7 @@ jobs:
           path: ./Bot
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     needs: build
     steps:
     - name: Azure Login
