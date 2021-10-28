@@ -44,10 +44,4 @@ jobs:
         name: my-artifact
         path: ${{ github.workspace }}/result.zip
     
-    # - name: Azure CLI script
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.0.72
-    #     inlineScript: |
-    #       az bot prepare-deploy --code-dir "." --lang Javascript
-    #       az webapp deployment source config-zip --resource-group "clip10" --name "clibotwebappp" --src "result.zip" 
+
