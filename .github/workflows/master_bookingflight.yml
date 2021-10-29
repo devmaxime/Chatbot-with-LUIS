@@ -59,6 +59,13 @@ jobs:
         run: |
           npm install
 
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az bot prepare-deploy --code-dir "." --lang Javascript
+
       - uses: actions/checkout@v2
       - name : Zip      
         uses: papeloto/action-zip@v1 
@@ -71,4 +78,4 @@ jobs:
         with:
           azcliversion: 2.0.72
           inlineScript: |
-            az webapp deployment source config-zip --resource-group "p10" --name "bookingflight" --src "result.zip" 
+            az webapp deployment source config-zip --resource-group "p10" --name "bookingflightbot" --src "result.zip" 
