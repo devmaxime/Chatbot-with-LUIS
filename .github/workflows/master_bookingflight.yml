@@ -59,10 +59,12 @@ jobs:
         run: |
           npm install
 
-      - name: zip
-        uses: montudor/action-zip@v1
+      - uses: actions/checkout@v2
+      - name : Zip      
+        uses: papeloto/action-zip@v1 
         with:
-          args: zip -qq -r result.zip Bot
+            files: / 
+            dest: result.zip
 
       - name: Azure CLI script
         uses: azure/CLI@v1
