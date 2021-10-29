@@ -6,7 +6,7 @@ name: Automatic
 on:
   push:
     branches:
-      - master
+      - testing
   workflow_dispatch:
   
 jobs:
