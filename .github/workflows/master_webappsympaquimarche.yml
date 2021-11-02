@@ -8,11 +8,29 @@ on:
     branches:
       - master
   workflow_dispatch:
-
+  
 jobs:
-  build:
+  unittest:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          
+      - name: Install Python dependencies
+        working-directory: ./Luis creator
+        run: |
+          pip install -r requirements.txt
+          
+      - name: run unittest
+        working-directory: ./Luis creator
+        run: |
+          python -m unittest  
 
+  upload:        
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -21,17 +39,11 @@ jobs:
         with:
           node-version: '14.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: ./Bot
 
   deploy:
     runs-on: ubuntu-latest
