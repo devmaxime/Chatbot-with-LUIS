@@ -43,6 +43,10 @@ const credentialsFactory = new ConfigurationServiceClientCredentialFactory({
     MicrosoftAppPassword: process.env.MicrosoftAppPassword
 });
 
+console.log(
+    credentialsFactory
+)
+
 const botFrameworkAuthentication = createBotFrameworkAuthenticationFromConfiguration(null, credentialsFactory);
 
 // Create adapter.
