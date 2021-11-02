@@ -60,10 +60,9 @@ jobs:
         with:
           name: node-app
 
-      - name: npm install and build
+      - name: npm install
         run: |
           npm install
-          npm build
           
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
