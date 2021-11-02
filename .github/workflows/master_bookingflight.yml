@@ -10,6 +10,25 @@ on:
   workflow_dispatch:
   
 jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          
+      - name: Install Python dependencies
+        working-directory: ./Luis creator
+        run: |
+          pip install -r requirements.txt
+          
+      - name: run unittest
+        working-directory: ./Luis creator
+        run: |
+          python -m unittest  
+
   upload:        
     runs-on: ubuntu-latest
     steps:

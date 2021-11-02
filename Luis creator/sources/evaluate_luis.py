@@ -28,20 +28,41 @@ class Score:
         self._intentsAlmostRightness = []
         self.ratioIntentsAlmostRightness = 0
 
+        self.accuracy = dict(
+            str_date = [],
+            end_date = [],
+            budget = [],
+            or_city = [],
+            dst_city = []
+        )
+
+        self.Almostaccuracy = dict(
+            str_date = [],
+            end_date = [],
+            budget = [],
+            or_city = [],
+            dst_city = []
+        )
+
 
 class Evaluate:
     def __init__(self, testSize, raw, trainSize, authoringKey, authoringEndpoint, LuisAppId) -> None:
+        print('==== EVALUATION START ====')
         self._client = LUISRuntimeClient(authoringEndpoint,   CognitiveServicesCredentials(authoringKey))
         self.score = Score()
         self._testData = Prepare(trainSize, raw, testSize)
         self._appId = LuisAppId
 
         self.evaluating(self._testData)
-        print('Intents number score', self.score.ratioIntentsNumber)
-        print('Exact intent score', self.score.ratioIntentsRightness)
-        print('Almost exact intent score', self.score.ratioIntentsAlmostRightness)
+        print('Entities number score', self.score.ratioIntentsNumber)
+        print('Exact entity score', self.score.ratioIntentsRightness)
+        print('Exact entity score by entities', self.score.accuracy)
 
-        exit()
+        print('Almost exact entity score', self.score.ratioIntentsAlmostRightness)
+        print('Almost exact entity score by entities', self.score.Almostaccuracy)
+        print('==== EVALUATION END ====')
+
+        
 
     def countIntent(self, row) -> int:
         """
@@ -77,7 +98,13 @@ class Evaluate:
         # Calculate means             
         self.score.ratioIntentsNumber = np.round(np.mean(self.score._intentsNumber), 3)  
         self.score.ratioIntentsRightness = np.round(np.mean(self.score._intentsRightness), 3)
-        self.score.ratioIntentsAlmostRightness = np.round(np.mean(self.score._intentsAlmostRightness), 3)        
+        self.score.ratioIntentsAlmostRightness = np.round(np.mean(self.score._intentsAlmostRightness), 3)
+
+        for acc in self.score.accuracy:
+            self.score.accuracy[acc] = np.round(np.mean(self.score.accuracy[acc]), 3)  
+
+        for acc in self.score.Almostaccuracy:
+            self.score.Almostaccuracy[acc] = np.round(np.mean(self.score.Almostaccuracy[acc]), 3)      
 
 
     def evaluateIntentNumber(self, row, queryResult) -> None:
@@ -97,13 +124,18 @@ class Evaluate:
         if(check_key_exist(queryResult.prediction.entities, 'ticketBooking')): #Avoid empty query result.
             for item in queryResult.prediction.entities['ticketBooking'][0].items():
                 if(row[item[0]] == item[1][0]): #Exact match
+                    self.score.accuracy[item[0]].append(1)
                     _score1.append(1)
                 else:
+                    self.score.accuracy[item[0]].append(0)
                     _score1.append(0)
                 if(similar(str(row[item[0]]), str(item[1][0])) > 0.90): #Almost match
+                    self.score.Almostaccuracy[item[0]].append(1)
                     _score2.append(1)
                 else:
+                    self.score.Almostaccuracy[item[0]].append(0)
                     _score2.append(0)
+
         if(bool(_score1)):
             self.score._intentsRightness.append(np.round(np.mean(_score1), 3))
         else:
@@ -111,4 +143,5 @@ class Evaluate:
         if(bool(_score2)):
             self.score._intentsAlmostRightness.append(np.round(np.mean(_score2), 3))
         else:
-            self.score._intentsAlmostRightness.append(0)            
+            self.score._intentsAlmostRightness.append(0)    
+       
